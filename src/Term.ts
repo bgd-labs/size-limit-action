@@ -2,12 +2,12 @@ import { exec } from "@actions/exec";
 import hasYarn from "has-yarn";
 import hasPNPM from "has-pnpm";
 
-import process from 'process';
-import path from 'path';
-import fs from 'fs';
+import process from "process";
+import path from "path";
+import fs from "fs";
 
 function hasBun(cwd = process.cwd()) {
-	return fs.existsSync(path.resolve(cwd, 'bun.lockb'));
+  return fs.existsSync(path.resolve(cwd, "bun.lockb"));
 }
 
 const INSTALL_STEP = "install";
@@ -22,7 +22,13 @@ class Term {
    * @returns The detected package manager in use, one of `yarn`, `pnpm`, `npm`, `bun`
    */
   getPackageManager(directory?: string): string {
-    return hasYarn(directory) ? "yarn" : hasPNPM(directory) ? "pnpm" : hasBun(directory) ? "bun" : "npm";
+    return hasYarn(directory)
+      ? "yarn"
+      : hasPNPM(directory)
+      ? "pnpm"
+      : hasBun(directory)
+      ? "bun"
+      : "npm";
   }
 
   async execSizeLimit(
