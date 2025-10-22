@@ -46,7 +46,7 @@ async function run() {
     const script = getInput("script");
     const packageManager = getInput("package_manager");
     const directory = getInput("directory") || process.cwd();
-    const ignoreUnchanged = getInput("ignore_unchanged");
+    const minDelta = getInput("min_delta");
     const windowsVerbatimArguments =
       getInput("windows_verbatim_arguments") === "true" ? true : false;
     const octokit = new GitHub(token);
@@ -87,18 +87,13 @@ async function run() {
       throw error;
     }
 
-    if (ignoreUnchanged) {
-      Object.keys(base).forEach(key => {
-        if (base[key].size === current[key].size) {
-          delete base[key];
-          delete current[key];
-        }
-      });
-    }
-
     const body = [
       SIZE_LIMIT_HEADING,
-      table(limit.formatResults(base, current))
+      table(
+        limit.formatResults(base, current, {
+          minDelta: minDelta ? Number(minDelta) : 0
+        })
+      )
     ].join("\r\n");
 
     const sizeLimitComment = await fetchPreviousComment(octokit, repo, pr);
@@ -126,6 +121,7 @@ async function run() {
           body
         });
       } catch (error) {
+        console.log(error);
         console.log(
           "Error updating comment. This can happen for PR's originating from a fork without write permissions."
         );

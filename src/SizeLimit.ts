@@ -40,12 +40,16 @@ class SizeLimit {
     return `${Math.ceil(seconds * 1000)} ms`;
   }
 
+  private getDeltaBps(current: number, base: number): number {
+    return ((current - base) / base) * 100;
+  }
+
   private formatChange(base: number = 0, current: number = 0): string {
     if (base === 0) {
       return "+100% 🔺";
     }
 
-    const value = ((current - base) / base) * 100;
+    const value = this.getDeltaBps(current, base);
     const formatted =
       (Math.sign(value) * Math.ceil(Math.abs(value) * 100)) / 100;
 
@@ -134,7 +138,8 @@ class SizeLimit {
 
   formatResults(
     base: { [name: string]: IResult },
-    current: { [name: string]: IResult }
+    current: { [name: string]: IResult },
+    options: { minDelta: number }
   ): Array<Array<string>> {
     const names = [...new Set([...Object.keys(base), ...Object.keys(current)])];
     const isSize = names.some(
@@ -143,15 +148,26 @@ class SizeLimit {
     const header = isSize
       ? SizeLimit.SIZE_RESULTS_HEADER
       : SizeLimit.TIME_RESULTS_HEADER;
-    const fields = names.map((name: string) => {
-      const baseResult = base[name] || EmptyResult;
-      const currentResult = current[name] || EmptyResult;
+    const fields = names
+      .filter(name => {
+        if (isSize)
+          return (
+            !base[name] ||
+            !current[name] ||
+            Math.abs(this.getDeltaBps(base[name].size, current[name].size)) >
+              options.minDelta
+          );
+        return true;
+      })
+      .map((name: string) => {
+        const baseResult = base[name] || EmptyResult;
+        const currentResult = current[name] || EmptyResult;
 
-      if (isSize) {
-        return this.formatSizeResult(name, baseResult, currentResult);
-      }
-      return this.formatTimeResult(name, baseResult, currentResult);
-    });
+        if (isSize) {
+          return this.formatSizeResult(name, baseResult, currentResult);
+        }
+        return this.formatTimeResult(name, baseResult, currentResult);
+      });
 
     return [header, ...fields];
   }

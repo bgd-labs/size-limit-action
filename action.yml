@@ -31,9 +31,9 @@ inputs:
   package_manager:
     required: false
     description: "The package manager used to run the build and install commands. If not provided, the manager will be auto detected. Example values: `yarn`, `npm`, `pnpm`, `bun`."
-  ignore_unchanged:
+  min_delta:
     required: false
-    description: "Whether to ignore unchanged files"
+    description: "If specified, only changes exceeding the delta will be reported"
 runs:
   using: "node20"
   main: "dist/index.js"
