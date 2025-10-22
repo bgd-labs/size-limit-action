@@ -143,26 +143,4 @@ describe("SizeLimit", () => {
       ["dist/new.js", "98.53 KB (+100% 🔺)"],
     ]);
   });
-
-  test("should ignore unchanged files", () => {
-    const limit = new SizeLimit();
-    const base = {
-      "dist/index.js": {
-        name: "dist/index.js",
-        size: 110894,
-      },
-    };
-    const current = {
-      "dist/new.js": {
-        name: "dist/new.js",
-        size: 100894,
-      },
-    };
-
-    expect(limit.formatResults(base, current)).toEqual([
-      SizeLimit.SIZE_RESULTS_HEADER,
-      ["dist/index.js", "0 B (-100% 🔽)"],
-      ["dist/new.js", "98.53 KB (+100% 🔺)"],
-    ]);
-  });
 });
