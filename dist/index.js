@@ -30747,7 +30747,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __nccwpck_require__(7484);
-const github_1 = __importDefault(__nccwpck_require__(3228));
+const github_1 = __nccwpck_require__(3228);
 // @ts-ignore
 const markdown_table_1 = __importDefault(__nccwpck_require__(7740));
 const Term_1 = __importDefault(__nccwpck_require__(2937));
@@ -30763,7 +30763,7 @@ function fetchPreviousComment(octokit, repo, pr) {
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { payload, repo } = github_1.default.context;
+            const { payload, repo } = github_1.context;
             const pr = payload.pull_request;
             if (!pr) {
                 throw new Error("No PR found. Only pull_request workflows are supported.");
@@ -30777,7 +30777,7 @@ function run() {
             const directory = (0, core_1.getInput)("directory") || process.cwd();
             const minDelta = (0, core_1.getInput)("min_delta");
             const windowsVerbatimArguments = (0, core_1.getInput)("windows_verbatim_arguments") === "true" ? true : false;
-            const octokit = github_1.default.getOctokit(token);
+            const octokit = (0, github_1.getOctokit)(token);
             const term = new Term_1.default();
             const limit = new SizeLimit_1.default();
             const { status, output } = yield term.execSizeLimit(null, skipStep, buildScript, cleanScript, windowsVerbatimArguments, directory, script, packageManager);

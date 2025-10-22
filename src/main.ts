@@ -1,5 +1,5 @@
 import { getInput, setFailed } from "@actions/core";
-import { default as Github } from "@actions/github";
+import { context, getOctokit } from "@actions/github";
 // @ts-ignore
 import table from "markdown-table";
 import Term from "./Term";
@@ -8,7 +8,7 @@ import SizeLimit from "./SizeLimit";
 const SIZE_LIMIT_HEADING = `## size-limit report 📦 `;
 
 async function fetchPreviousComment(
-  octokit: ReturnType<typeof Github.getOctokit>,
+  octokit: ReturnType<typeof getOctokit>,
   repo: { owner: string; repo: string },
   pr: { number: number }
 ) {
@@ -25,7 +25,7 @@ async function fetchPreviousComment(
 
 async function run() {
   try {
-    const { payload, repo } = Github.context;
+    const { payload, repo } = context;
     const pr = payload.pull_request;
 
     if (!pr) {
@@ -44,7 +44,7 @@ async function run() {
     const minDelta = getInput("min_delta");
     const windowsVerbatimArguments =
       getInput("windows_verbatim_arguments") === "true" ? true : false;
-    const octokit = Github.getOctokit(token);
+    const octokit = getOctokit(token);
     const term = new Term();
     const limit = new SizeLimit();
 
