@@ -30792,12 +30792,14 @@ function run() {
                 console.log("Error parsing size-limit output. The output should be a json.");
                 throw error;
             }
-            const body = [
+            let body = [
                 SIZE_LIMIT_HEADING,
                 (0, markdown_table_1.default)(limit.formatResults(base, current, {
                     minDelta: minDelta ? Number(minDelta) : 0
                 }))
             ].join("\r\n");
+            if (body.length > 65536)
+                body = body.substring(0, 65536);
             const sizeLimitComment = yield fetchPreviousComment(octokit, repo, pr);
             if (!sizeLimitComment) {
                 try {

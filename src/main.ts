@@ -82,7 +82,7 @@ async function run() {
       throw error;
     }
 
-    const body = [
+    let body = [
       SIZE_LIMIT_HEADING,
       table(
         limit.formatResults(base, current, {
@@ -90,6 +90,8 @@ async function run() {
         })
       )
     ].join("\r\n");
+
+    if (body.length > 65536) body = body.substring(0, 65536);
 
     const sizeLimitComment = await fetchPreviousComment(octokit, repo, pr);
 
